@@ -19,7 +19,7 @@ export class TasksController {
 
   // http://localhost:3000/tasks
   @Get()
-  gatTasks(@Query() filterDto: GetTasksFliterDto): Task[] {
+  getTasks(@Query() filterDto: GetTasksFliterDto): Task[] {
     // if there is any filters defined, call taskSevics.getTasksWithFilters.
     // Otherwise, get all tasks
     if (Object.keys(filterDto).length) {
@@ -32,7 +32,7 @@ export class TasksController {
   // http://localhost:3000/tasks/id
   @Get('/:id')
   getTaskById(@Param('id') id: string): Task {
-    return this.taskService.gatTaskById(id);
+    return this.taskService.getTaskById(id);
   }
 
   @Post()
