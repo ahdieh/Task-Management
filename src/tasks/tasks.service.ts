@@ -2,14 +2,37 @@ import { Injectable } from '@nestjs/common';
 import { Task, TaskStatus } from './task.model';
 import { v4 as uuid } from 'uuid';
 import { CreaeTaskDto } from './dto/create-task.dto';
+import { GetTasksFliterDto } from './dto/get-task-filter.dto';
 
 @Injectable()
 export class TasksService {
   // make it private to limit what controllers can do
   private tasks: Task[] = [];
   // creating some methods to communicate with the controllers
-  gatAllTasks(): Task[] {
+  getAllTasks(): Task[] {
     return this.tasks;
+  }
+
+  getTasksWithFilters(filterDto: GetTasksFliterDto): Task[] {
+    const { status, search } = filterDto;
+
+    // define a temporary array to hold the result
+    let tasks = this.getAllTasks();
+    // do something with status
+    if (status) {
+      tasks = tasks.filter((task) => task.status === status);
+    }
+    // do something with search
+    if (search) {
+      tasks = tasks.filter((task) => {
+        if (task.title.includes(search) || task.description.includes(search)) {
+          return true;
+        }
+        return false;
+      });
+    }
+    // return the final result
+    return tasks;
   }
 
   gatTaskById(id: string): Task {
@@ -31,5 +54,11 @@ export class TasksService {
 
   deleteTask(id: string): void {
     this.tasks = this.tasks.filter((task) => task.id === id);
+  }
+
+  updateTaskStatus(id: string, status: TaskStatus): Task {
+    const task = this.gatTaskById(id);
+    task.status = status;
+    return task;
   }
 }
